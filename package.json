@@ -2,6 +2,12 @@
   "name": "scraps",
   "displayName": "scraps",
   "description": "This extension allows you to make notes in the sidebar.",
+  "icon": "icon.png",
+  "publisher": "corrupt952",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corrupt952/scraps"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.89.0"
@@ -41,7 +47,8 @@
     "lint": "eslint src --ext ts",
     "pretest": "npm run compile && npm run lint",
     "test": "vscode-test",
-    "package": "npx vsce package"
+    "package": "npx vsce package",
+    "publish": "npx vsce publish"
   },
   "devDependencies": {
     "@types/vscode": "^1.89.0",
