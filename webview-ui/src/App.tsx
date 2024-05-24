@@ -82,7 +82,7 @@ const TiptapEditor = () => {
     content: JSON.parse(localStorage.getItem("content") || "{}"),
     editorProps: {
       attributes: {
-        class: "prose prose-base focus:outline-none px-2",
+        class: "prose prose-base px-2 caret-grey-500 focus:outline-none",
       },
     },
     onUpdate({ editor }) {
