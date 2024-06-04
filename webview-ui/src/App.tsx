@@ -66,7 +66,7 @@ const TiptapEditor = () => {
       TaskItem.configure({
         nested: true,
         HTMLAttributes: {
-          class: "flex items-center task-list-item",
+          class: "flex task-list-item items-baseline",
         },
       }),
       Link.configure({
