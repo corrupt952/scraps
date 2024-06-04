@@ -10,6 +10,11 @@ body,
   height: 100%;
 }
 
+* {
+  box-sizing: border-box;
+  line-height: 1.8;
+}
+
 body {
   min-width: 100%;
   min-height: 100%;
