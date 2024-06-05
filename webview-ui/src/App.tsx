@@ -8,6 +8,14 @@ import TaskItem from "@tiptap/extension-task-item";
 import Placeholder from "@tiptap/extension-placeholder";
 import Heading from "@tiptap/extension-heading";
 
+type InitialData = {
+  label: string;
+  content: string;
+};
+
+const initialData = (window as any).initialData as InitialData; // eslint-disable-line
+const vscode = (window as any).acquireVsCodeApi(); // eslint-disable-line
+
 const TiptapEditor = () => {
   const editor = useEditor({
     extensions: [
@@ -77,9 +85,12 @@ const TiptapEditor = () => {
       }),
       Placeholder.configure({
         placeholder: "Start typing...",
+        emptyNodeClass:
+          "first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none",
       }),
     ],
-    content: JSON.parse(localStorage.getItem("content") || "{}"),
+    autofocus: true,
+    content: JSON.parse(initialData.content || "{}"),
     editorProps: {
       attributes: {
         class: "prose prose-base px-2 caret-grey-500 focus:outline-none",
@@ -88,6 +99,7 @@ const TiptapEditor = () => {
     onUpdate({ editor }) {
       const json = editor.getJSON();
       localStorage.setItem("content", JSON.stringify(json));
+      vscode.postMessage({ type: "update", data: { message: json } });
     },
   });
 
@@ -98,12 +110,14 @@ const TiptapEditor = () => {
   };
 
   return (
-    <div
-      className="fixed top-0 left-0 w-full h-full p-1.5 rounded box-border"
-      onClick={handleClick}
-    >
-      <EditorContent editor={editor} />
-    </div>
+    <>
+      <h1 className="w-full text-3xl font-bold text-left p-1.5 ml-2">
+        {initialData.label}
+      </h1>
+      <div className="w-full h-full p-1.5 mt-4" onClick={handleClick}>
+        <EditorContent editor={editor} />
+      </div>
+    </>
   );
 };
 

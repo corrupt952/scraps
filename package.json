@@ -18,7 +18,24 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [],
+    "commands": [
+      {
+        "command": "scraps.addItem",
+        "title": "➕️"
+      },
+      {
+        "command": "scraps.renameItem",
+        "title": "Rename"
+      },
+      {
+        "command": "scraps.deleteItem",
+        "title": "Delete"
+      },
+      {
+        "command": "scraps.editItem",
+        "title": "Edit"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -31,9 +48,42 @@
     "views": {
       "scraps": [
         {
+          "type": "tree",
+          "id": "scraps.list",
+          "name": "List",
+          "initialSize": 0.1
+        },
+        {
           "type": "webview",
-          "id": "scraps.webview",
-          "name": "scraps"
+          "id": "scraps.editor",
+          "name": "Editor"
+        },
+        {
+          "type": "webview",
+          "id": "scraps.oldEditor",
+          "name": "Old Editor",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "scraps.addItem",
+          "when": "view == scraps.list",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "scraps.renameItem",
+          "when": "view == scraps.list",
+          "group": "1_modification"
+        },
+        {
+          "command": "scraps.deleteItem",
+          "when": "view == scraps.list",
+          "group": "1_modification"
         }
       ]
     }
