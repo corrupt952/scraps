@@ -46,7 +46,7 @@ export class OldEditorProvider implements vscode.WebviewViewProvider {
   <script>
     window.initialData = {
       label: "Old Item",
-      content: localStorage.getItem("content") || "",
+      content: localStorage.getItem("content") || "{}",
     };
   </script>
   <script type="module" src="${scriptUri}"></script>
