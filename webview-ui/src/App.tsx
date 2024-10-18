@@ -84,7 +84,7 @@ const TiptapEditor = () => {
         },
       }),
       Placeholder.configure({
-        placeholder: "Start typing...",
+        placeholder: `Start typing...`,
         emptyNodeClass:
           "first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none",
       }),
@@ -103,18 +103,12 @@ const TiptapEditor = () => {
     },
   });
 
-  const handleClick = () => {
-    if (editor) {
-      editor.chain().focus().toggleBold().run();
-    }
-  };
-
   return (
     <>
       <h1 className="w-full text-3xl font-bold text-left p-1.5 ml-2">
         {initialData.label}
       </h1>
-      <div className="w-full h-full p-1.5 mt-4" onClick={handleClick}>
+      <div className="w-full h-full p-1.5 mt-4">
         <EditorContent editor={editor} />
       </div>
     </>
