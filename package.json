@@ -91,7 +91,8 @@
   "scripts": {
     "prewebview-ui:watch": "cd webview-ui && npm install",
     "webview-ui:watch": "cd webview-ui && npm run watch",
-    "vscode:prepublish": "npm run compile",
+    "webview-ui:compile": "cd webview-ui && npm run build",
+    "vscode:prepublish": "npm run webview-ui:compile && npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
