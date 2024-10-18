@@ -21,5 +21,8 @@
       "path": "zsh",
       "args": ["-l", "-i"]
     }
-  }
+  },
+
+  // Code Spell Checker
+  "cSpell.words": ["tiptap"]
 }
