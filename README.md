@@ -2,6 +2,8 @@
 
 Scraps is a simple tool that allows you to make notes in the sidebar.
 
+Keep your thoughts close, without cluttering your code.
+
 ## Directory Structure
 
 ```plaintext
