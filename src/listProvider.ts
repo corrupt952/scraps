@@ -106,7 +106,7 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
       const allItems = await this.storageManager.listAll();
       
       // Sort each storage type's items by updatedAt
-      for (const [type, items] of allItems) {
+      for (const [, items] of allItems) {
         items.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       }
       

@@ -1,5 +1,5 @@
 {
-  "exclude": ["node_modules", "webview-ui"],
+  "exclude": ["node_modules", "webview-ui", "tests"],
   "compilerOptions": {
     "module": "Node16",
     "target": "ES2022",

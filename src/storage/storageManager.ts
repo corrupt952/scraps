@@ -16,12 +16,13 @@ export class StorageManager {
 
   private createProvider(type: StorageType): StorageProvider {
     switch (type) {
-      case StorageType.File:
+      case StorageType.File: {
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         if (!workspaceFolder) {
           throw new Error("No workspace folder found");
         }
         return new FileStorageProvider(workspaceFolder);
+      }
       case StorageType.GlobalState:
       default:
         return new GlobalStateStorageProvider(this.context.globalState);

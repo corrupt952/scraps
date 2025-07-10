@@ -3,7 +3,6 @@ import { EditorProvider } from "./editorProvider";
 import { ListProvider, ScrapItem } from "./listProvider";
 import { OldEditorProvider } from "./oldEditorProvider";
 import { MultiStorageManager } from "./storage/multiStorageManager";
-import { StorageType } from "./storage/types";
 
 export function activate(context: vscode.ExtensionContext) {
   const storageManager = new MultiStorageManager(context);
