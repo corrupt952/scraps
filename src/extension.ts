@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { EditorProvider } from "./editorProvider";
 import { ListProvider, ScrapItem } from "./listProvider";
-import { OldEditorProvider } from "./oldEditorProvider";
 import { MultiStorageManager } from "./storage/multiStorageManager";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -9,7 +8,6 @@ export function activate(context: vscode.ExtensionContext) {
   
   const listProvider = new ListProvider(storageManager);
   const editorProvider = new EditorProvider(context.extensionUri, listProvider);
-  const oldEditorProvider = new OldEditorProvider(context.extensionUri);
 
   // Auto-migrate old data if needed
   listProvider.migrateFromOldFormat().catch(error => {
@@ -94,12 +92,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(listView);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider("scraps.editor", editorProvider)
-  );
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      "scraps.oldEditor",
-      oldEditorProvider
-    )
   );
 
   // Listen for workspace folder changes

@@ -66,12 +66,6 @@
           "type": "webview",
           "id": "scraps.editor",
           "name": "Editor"
-        },
-        {
-          "type": "webview",
-          "id": "scraps.oldEditor",
-          "name": "Old Editor",
-          "visibility": "collapsed"
         }
       ]
     },
