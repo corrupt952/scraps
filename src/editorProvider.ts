@@ -41,8 +41,8 @@ export class EditorProvider implements vscode.WebviewViewProvider {
 
       switch (message.type) {
         case "update":
-          this._item.content = JSON.stringify(message.data.message);
-          this.listProvider.editItem(this._item, this._item.content);
+          const content = JSON.stringify(message.data.message);
+          this.listProvider.editItem(this._item, content);
           break;
       }
     });

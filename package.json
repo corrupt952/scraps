@@ -34,6 +34,15 @@
       {
         "command": "scraps.editItem",
         "title": "Edit"
+      },
+      {
+        "command": "scraps.refreshList",
+        "title": "Refresh"
+      },
+      {
+        "command": "scraps.addToStorage",
+        "title": "Add New Scrap",
+        "icon": "$(add)"
       }
     ],
     "viewsContainers": {
@@ -69,20 +78,25 @@
     "menus": {
       "view/title": [
         {
-          "command": "scraps.addItem",
+          "command": "scraps.refreshList",
           "when": "view == scraps.list",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
+          "command": "scraps.addToStorage",
+          "when": "view == scraps.list && viewItem =~ /^storageGroup/ && viewItem =~ /available/",
+          "group": "navigation@1"
+        },
+        {
           "command": "scraps.renameItem",
-          "when": "view == scraps.list",
+          "when": "view == scraps.list && viewItem =~ /^scrapItem/",
           "group": "1_modification"
         },
         {
           "command": "scraps.deleteItem",
-          "when": "view == scraps.list",
+          "when": "view == scraps.list && viewItem =~ /^scrapItem/",
           "group": "1_modification"
         }
       ]
@@ -102,14 +116,18 @@
     "publish": "npx vsce publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.89.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "22.x",
+    "@types/vscode": "^1.89.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.3.9"
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "uuid": "^11.1.0"
   }
 }

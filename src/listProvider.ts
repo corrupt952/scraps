@@ -1,100 +1,158 @@
 import * as vscode from "vscode";
+import { MultiStorageManager } from "./storage/multiStorageManager";
+import { ScrapData, StorageType } from "./storage/types";
+import { StorageGroupItem, ScrapItem } from "./treeItems";
+import { v4 as uuidv4 } from "uuid";
 
-export class ListProvider implements vscode.TreeDataProvider<ScrapItem> {
-  private _onDidChangeTreeData: vscode.EventEmitter<ScrapItem | undefined> =
-    new vscode.EventEmitter<ScrapItem | undefined>();
-  readonly onDidChangeTreeData: vscode.Event<ScrapItem | undefined> =
+type TreeItem = StorageGroupItem | ScrapItem;
+
+export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
+  private _onDidChangeTreeData: vscode.EventEmitter<TreeItem | undefined> =
+    new vscode.EventEmitter<TreeItem | undefined>();
+  readonly onDidChangeTreeData: vscode.Event<TreeItem | undefined> =
     this._onDidChangeTreeData.event;
 
-  private items: ScrapItem[] = [];
+  private storageGroups: Map<StorageType, ScrapData[]> = new Map();
 
-  constructor(private readonly globalState: vscode.Memento) {
+  constructor(private readonly storageManager: MultiStorageManager) {
     this.loadItems();
   }
 
-  getTreeItem(element: ScrapItem): vscode.TreeItem {
+  getTreeItem(element: TreeItem): vscode.TreeItem {
     return element;
   }
 
-  getChildren(element?: ScrapItem): Thenable<ScrapItem[]> {
-    if (element === undefined) {
-      return Promise.resolve(this.items);
+  async getChildren(element?: TreeItem): Promise<TreeItem[]> {
+    if (!element) {
+      // Root level - return storage groups
+      const groups: StorageGroupItem[] = [];
+      
+      // Add Global Storage
+      const globalItems = this.storageGroups.get(StorageType.GlobalState) || [];
+      groups.push(new StorageGroupItem(
+        StorageType.GlobalState,
+        true,
+        globalItems.length
+      ));
+      
+      // Add File Storage (if available)
+      const fileItems = this.storageGroups.get(StorageType.File) || [];
+      const isFileAvailable = this.storageManager.isAvailable(StorageType.File);
+      groups.push(new StorageGroupItem(
+        StorageType.File,
+        isFileAvailable,
+        fileItems.length
+      ));
+      
+      return groups;
     }
-    return Promise.resolve([]);
+    
+    if (element instanceof StorageGroupItem) {
+      // Return items for this storage type
+      const items = this.storageGroups.get(element.storageType) || [];
+      return items.map(scrap => new ScrapItem(scrap, element.storageType));
+    }
+    
+    return [];
   }
 
-  addItem(label: string) {
-    const newItem = new ScrapItem(
+  async addItem(label: string = "Untitled", storageType: StorageType = StorageType.GlobalState): Promise<void> {
+    const now = new Date().toISOString();
+    const newScrap: ScrapData = {
+      id: uuidv4(),
       label,
-      "{}",
-      vscode.TreeItemCollapsibleState.None
-    );
-    this.items.push(newItem);
-    this.saveItems();
+      content: "{}",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await this.storageManager.saveToType(storageType, newScrap);
+    await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  renameItem(item: ScrapItem, label: string) {
-    item.label = label;
-    this.saveItems();
+  async addItemToStorage(storageType: StorageType, label: string = "Untitled"): Promise<void> {
+    await this.storageManager.initialize();
+    await this.addItem(label, storageType);
+  }
+
+  async renameItem(item: ScrapItem, newLabel: string): Promise<void> {
+    await this.storageManager.updateInType(item.storageType, item.id, { label: newLabel });
+    await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  editItem(item: ScrapItem, content: string) {
-    item.content = content;
-    this.saveItems();
+  async editItem(item: ScrapItem, content: string): Promise<void> {
+    await this.storageManager.updateInType(item.storageType, item.id, { content });
+    await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  deleteItem(item: ScrapItem) {
-    const index = this.items.indexOf(item);
-    if (index !== -1) {
-      this.items.splice(index, 1);
-      this.saveItems();
-      this._onDidChangeTreeData.fire(undefined);
-    }
+  async deleteItem(item: ScrapItem): Promise<void> {
+    await this.storageManager.deleteFromType(item.storageType, item.id);
+    await this.loadItems();
+    this._onDidChangeTreeData.fire(undefined);
   }
+
 
   refresh(): void {
+    this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  private saveItems() {
-    const data = this.items.map((item) => ({
+
+  private async loadItems(): Promise<void> {
+    try {
+      const allItems = await this.storageManager.listAll();
+      
+      // Sort each storage type's items by updatedAt
+      for (const [type, items] of allItems) {
+        items.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      }
+      
+      this.storageGroups = allItems;
+    } catch (error) {
+      console.error("Failed to load scraps:", error);
+      this.storageGroups.clear();
+    }
+  }
+
+  // Migration helper for existing data
+  async migrateFromOldFormat(): Promise<void> {
+    const oldData = this.storageManager.context.globalState.get<{label: string, content: string}[]>("items");
+    if (!oldData || oldData.length === 0) {
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const migratedScraps: ScrapData[] = oldData.map(item => ({
+      id: uuidv4(),
       label: item.label,
       content: item.content,
+      createdAt: now,
+      updatedAt: now
     }));
-    this.globalState.update("items", data);
+
+    // Save migrated data to GlobalState
+    for (const scrap of migratedScraps) {
+      await this.storageManager.saveToType(StorageType.GlobalState, scrap);
+    }
+
+    // Clear old data
+    await this.storageManager.context.globalState.update("items", undefined);
+    
+    // Reload items
+    await this.loadItems();
+    this._onDidChangeTreeData.fire(undefined);
   }
 
-  private loadItems() {
-    const items =
-      this.globalState.get<{ label: string; content: string }[]>("items") || [];
-    this.items = Array.from(items, ({ label, content }) => {
-      return new ScrapItem(
-        label,
-        content,
-        vscode.TreeItemCollapsibleState.None
-      );
-    });
-  }
-}
-
-export class ScrapItem extends vscode.TreeItem {
-  public content: string = "";
-
-  constructor(
-    label: string,
-    content: string,
-    collapsibleState: vscode.TreeItemCollapsibleState
-  ) {
-    super(label, collapsibleState);
-    this.content = content;
-    this.iconPath = new vscode.ThemeIcon("note");
-    this.command = {
-      command: "scraps.editItem",
-      title: "Edit",
-      arguments: [this],
-    };
+  // Handle workspace changes
+  async onWorkspaceFoldersChanged(): Promise<void> {
+    await this.storageManager.onWorkspaceFoldersChanged();
+    await this.loadItems();
+    this._onDidChangeTreeData.fire(undefined);
   }
 }
+
+// Re-export ScrapItem for backward compatibility
+export { ScrapItem } from "./treeItems";
