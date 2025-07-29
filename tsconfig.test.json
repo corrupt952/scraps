@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2022",
+    "esModuleInterop": true,
+    "rootDir": ".",
+    "types": ["mocha", "node", "vscode"]
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "webview-ui"]
+}

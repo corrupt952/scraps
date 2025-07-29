@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { MultiStorageManager } from '../storage/multiStorageManager';
-import { StorageType, ScrapData } from '../storage/types';
+import { MultiStorageManager } from '../src/storage/multiStorageManager';
+import { StorageType, ScrapData } from '../src/storage/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock ExtensionContext

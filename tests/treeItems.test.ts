@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { StorageGroupItem, ScrapItem } from '../treeItems';
-import { StorageType, ScrapData } from '../storage/types';
+import { StorageGroupItem, ScrapItem } from '../src/treeItems';
+import { StorageType, ScrapData } from '../src/storage/types';
 import * as vscode from 'vscode';
 
 suite('TreeItems Test Suite', () => {

@@ -1,6 +1,7 @@
 import * as assert from 'assert';
-import { GlobalStateStorageProvider } from '../storage/globalStateProvider';
-import { ScrapData } from '../storage/types';
+import * as vscode from 'vscode';
+import { GlobalStateStorageProvider } from '../src/storage/globalStateProvider';
+import { ScrapData } from '../src/storage/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock vscode.Memento
