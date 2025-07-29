@@ -15,7 +15,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:scraps.list"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
