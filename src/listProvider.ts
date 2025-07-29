@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import { MultiStorageManager } from "./storage/multiStorageManager";
 import { ScrapData, StorageType } from "./storage/types";
 import { StorageGroupItem, ScrapItem } from "./treeItems";
-import { v4 as uuidv4 } from "uuid";
 
 type TreeItem = StorageGroupItem | ScrapItem;
 
@@ -59,7 +58,7 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
   async addItem(label: string = "Untitled", storageType: StorageType = StorageType.GlobalState): Promise<void> {
     const now = new Date().toISOString();
     const newScrap: ScrapData = {
-      id: uuidv4(),
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
       label,
       content: "{}",
       createdAt: now,
@@ -126,7 +125,7 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
 
     const now = new Date().toISOString();
     const migratedScraps: ScrapData[] = oldData.map(item => ({
-      id: uuidv4(),
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
       label: item.label,
       content: item.content,
       createdAt: now,

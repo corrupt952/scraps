@@ -16,7 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onView:scraps.list"
   ],
   "main": "./out/extension.js",
   "contributes": {
