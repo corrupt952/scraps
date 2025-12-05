@@ -8,6 +8,7 @@ export class FileStorageProvider implements StorageProvider {
   private readonly indexFile = "index.json";
   private scrapsPath: string;
   private indexPath: string;
+  private directoryCreated = false;
 
   constructor(private readonly workspaceFolder: vscode.WorkspaceFolder) {
     this.scrapsPath = path.join(workspaceFolder.uri.fsPath, this.scrapsDir);
@@ -15,29 +16,51 @@ export class FileStorageProvider implements StorageProvider {
   }
 
   async initialize(): Promise<void> {
+    // Lazy initialization - directory will be created on first save
+    // Just check if directory already exists
+    try {
+      await fs.access(this.scrapsPath);
+      this.directoryCreated = true;
+    } catch {
+      // Directory doesn't exist yet, that's fine
+      this.directoryCreated = false;
+    }
+  }
+
+  private async ensureDirectoryExists(): Promise<void> {
+    if (this.directoryCreated) {
+      return;
+    }
+
     try {
       await fs.mkdir(this.scrapsPath, { recursive: true });
-      
+
       // Create index file if it doesn't exist
       try {
         await fs.access(this.indexPath);
       } catch {
         await fs.writeFile(this.indexPath, JSON.stringify([], null, 2));
       }
-      
+
       // Add .scraps to .gitignore if it doesn't exist
-      const gitignorePath = path.join(this.workspaceFolder.uri.fsPath, ".gitignore");
-      try {
-        const gitignoreContent = await fs.readFile(gitignorePath, "utf8");
-        if (!gitignoreContent.includes(this.scrapsDir)) {
-          await fs.appendFile(gitignorePath, `\n# Scraps local notes\n${this.scrapsDir}/\n`);
-        }
-      } catch {
-        // .gitignore doesn't exist, create it
-        await fs.writeFile(gitignorePath, `# Scraps local notes\n${this.scrapsDir}/\n`);
-      }
+      await this.addToGitignore();
+
+      this.directoryCreated = true;
     } catch (error) {
-      throw new Error(`Failed to initialize file storage: ${error}`);
+      throw new Error(`Failed to create scraps directory: ${error}`);
+    }
+  }
+
+  private async addToGitignore(): Promise<void> {
+    const gitignorePath = path.join(this.workspaceFolder.uri.fsPath, ".gitignore");
+    try {
+      const gitignoreContent = await fs.readFile(gitignorePath, "utf8");
+      if (!gitignoreContent.includes(this.scrapsDir)) {
+        await fs.appendFile(gitignorePath, `\n# Scraps local notes\n${this.scrapsDir}/\n`);
+      }
+    } catch {
+      // .gitignore doesn't exist, create it
+      await fs.writeFile(gitignorePath, `# Scraps local notes\n${this.scrapsDir}/\n`);
     }
   }
 
@@ -56,18 +79,21 @@ export class FileStorageProvider implements StorageProvider {
   }
 
   async save(scrap: ScrapData): Promise<void> {
+    // Ensure directory exists before saving
+    await this.ensureDirectoryExists();
+
     const items = await this.list();
     const existingIndex = items.findIndex(item => item.id === scrap.id);
-    
+
     if (existingIndex >= 0) {
       items[existingIndex] = scrap;
     } else {
       items.push(scrap);
     }
-    
+
     const scrapFile = path.join(this.scrapsPath, `${scrap.id}.json`);
     await fs.writeFile(scrapFile, JSON.stringify(scrap, null, 2));
-    
+
     await fs.writeFile(this.indexPath, JSON.stringify(items, null, 2));
   }
 
