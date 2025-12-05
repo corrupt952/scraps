@@ -52,15 +52,24 @@ export class FileStorageProvider implements StorageProvider {
   }
 
   private async addToGitignore(): Promise<void> {
-    const gitignorePath = path.join(this.workspaceFolder.uri.fsPath, ".gitignore");
+    const gitignorePath = path.join(
+      this.workspaceFolder.uri.fsPath,
+      ".gitignore",
+    );
     try {
       const gitignoreContent = await fs.readFile(gitignorePath, "utf8");
       if (!gitignoreContent.includes(this.scrapsDir)) {
-        await fs.appendFile(gitignorePath, `\n# Scraps local notes\n${this.scrapsDir}/\n`);
+        await fs.appendFile(
+          gitignorePath,
+          `\n# Scraps local notes\n${this.scrapsDir}/\n`,
+        );
       }
     } catch {
       // .gitignore doesn't exist, create it
-      await fs.writeFile(gitignorePath, `# Scraps local notes\n${this.scrapsDir}/\n`);
+      await fs.writeFile(
+        gitignorePath,
+        `# Scraps local notes\n${this.scrapsDir}/\n`,
+      );
     }
   }
 
@@ -75,7 +84,7 @@ export class FileStorageProvider implements StorageProvider {
 
   async get(id: string): Promise<ScrapData | null> {
     const items = await this.list();
-    return items.find(item => item.id === id) || null;
+    return items.find((item) => item.id === id) || null;
   }
 
   async save(scrap: ScrapData): Promise<void> {
@@ -83,7 +92,7 @@ export class FileStorageProvider implements StorageProvider {
     await this.ensureDirectoryExists();
 
     const items = await this.list();
-    const existingIndex = items.findIndex(item => item.id === scrap.id);
+    const existingIndex = items.findIndex((item) => item.id === scrap.id);
 
     if (existingIndex >= 0) {
       items[existingIndex] = scrap;
@@ -99,15 +108,15 @@ export class FileStorageProvider implements StorageProvider {
 
   async delete(id: string): Promise<void> {
     const items = await this.list();
-    const filtered = items.filter(item => item.id !== id);
-    
+    const filtered = items.filter((item) => item.id !== id);
+
     const scrapFile = path.join(this.scrapsPath, `${id}.json`);
     try {
       await fs.unlink(scrapFile);
     } catch {
       // File might not exist
     }
-    
+
     await fs.writeFile(this.indexPath, JSON.stringify(filtered, null, 2));
   }
 
@@ -116,8 +125,12 @@ export class FileStorageProvider implements StorageProvider {
     if (!item) {
       throw new Error(`Scrap with id ${id} not found`);
     }
-    
-    const updated = { ...item, ...updates, updatedAt: new Date().toISOString() };
+
+    const updated = {
+      ...item,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
     await this.save(updated);
   }
 }

@@ -110,7 +110,7 @@
     "test": "TS_NODE_PROJECT=tsconfig.test.json vscode-test",
     "package": "npx vsce package",
     "publish": "npx vsce publish",
-    "format": "prettier --write ."
+    "format": "prettier --write src tests webview-ui"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",

@@ -7,9 +7,7 @@ export class MultiStorageManager {
   private providers: Map<StorageType, StorageProvider> = new Map();
   private initialized = false;
 
-  constructor(
-    public readonly context: vscode.ExtensionContext
-  ) {
+  constructor(public readonly context: vscode.ExtensionContext) {
     this.initializeProviders();
   }
 
@@ -17,7 +15,7 @@ export class MultiStorageManager {
     // Always initialize GlobalState provider
     this.providers.set(
       StorageType.GlobalState,
-      new GlobalStateStorageProvider(this.context.globalState)
+      new GlobalStateStorageProvider(this.context.globalState),
     );
 
     // Try to initialize File provider if workspace is available
@@ -25,7 +23,7 @@ export class MultiStorageManager {
     if (workspaceFolder) {
       this.providers.set(
         StorageType.File,
-        new FileStorageProvider(workspaceFolder)
+        new FileStorageProvider(workspaceFolder),
       );
     }
   }
@@ -50,7 +48,7 @@ export class MultiStorageManager {
     if (!provider) {
       return [];
     }
-    
+
     try {
       return await provider.list();
     } catch (error) {
@@ -62,7 +60,7 @@ export class MultiStorageManager {
   async listAll(): Promise<Map<StorageType, ScrapData[]>> {
     await this.initialize();
     const result = new Map<StorageType, ScrapData[]>();
-    
+
     for (const [type, provider] of this.providers) {
       try {
         const items = await provider.list();
@@ -72,7 +70,7 @@ export class MultiStorageManager {
         result.set(type, []);
       }
     }
-    
+
     return result;
   }
 
@@ -103,7 +101,11 @@ export class MultiStorageManager {
     return provider.delete(id);
   }
 
-  async updateInType(type: StorageType, id: string, updates: Partial<ScrapData>): Promise<void> {
+  async updateInType(
+    type: StorageType,
+    id: string,
+    updates: Partial<ScrapData>,
+  ): Promise<void> {
     await this.initialize();
     const provider = this.providers.get(type);
     if (!provider) {
@@ -111,7 +113,6 @@ export class MultiStorageManager {
     }
     return provider.update(id, updates);
   }
-
 
   isAvailable(type: StorageType): boolean {
     return this.providers.has(type);
@@ -121,11 +122,10 @@ export class MultiStorageManager {
     return Array.from(this.providers.keys());
   }
 
-
   // Workspace change handler
   async onWorkspaceFoldersChanged(): Promise<void> {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    
+
     if (workspaceFolder && !this.providers.has(StorageType.File)) {
       // Workspace added, initialize file provider
       const fileProvider = new FileStorageProvider(workspaceFolder);
@@ -134,7 +134,6 @@ export class MultiStorageManager {
     } else if (!workspaceFolder && this.providers.has(StorageType.File)) {
       // Workspace removed, remove file provider
       this.providers.delete(StorageType.File);
-      
     }
   }
 }

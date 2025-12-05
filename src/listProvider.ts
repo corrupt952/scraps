@@ -25,37 +25,40 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
     if (!element) {
       // Root level - return storage groups
       const groups: StorageGroupItem[] = [];
-      
+
       // Add Global Storage
       const globalItems = this.storageGroups.get(StorageType.GlobalState) || [];
-      groups.push(new StorageGroupItem(
-        StorageType.GlobalState,
-        true,
-        globalItems.length
-      ));
-      
+      groups.push(
+        new StorageGroupItem(StorageType.GlobalState, true, globalItems.length),
+      );
+
       // Add File Storage (if available)
       const fileItems = this.storageGroups.get(StorageType.File) || [];
       const isFileAvailable = this.storageManager.isAvailable(StorageType.File);
-      groups.push(new StorageGroupItem(
-        StorageType.File,
-        isFileAvailable,
-        fileItems.length
-      ));
-      
+      groups.push(
+        new StorageGroupItem(
+          StorageType.File,
+          isFileAvailable,
+          fileItems.length,
+        ),
+      );
+
       return groups;
     }
-    
+
     if (element instanceof StorageGroupItem) {
       // Return items for this storage type
       const items = this.storageGroups.get(element.storageType) || [];
-      return items.map(scrap => new ScrapItem(scrap, element.storageType));
+      return items.map((scrap) => new ScrapItem(scrap, element.storageType));
     }
-    
+
     return [];
   }
 
-  async addItem(label: string = "Untitled", storageType: StorageType = StorageType.GlobalState): Promise<void> {
+  async addItem(
+    label: string = "Untitled",
+    storageType: StorageType = StorageType.GlobalState,
+  ): Promise<void> {
     const now = new Date().toISOString();
     const newScrap: ScrapData = {
       id: Date.now().toString() + Math.random().toString(36).slice(2),
@@ -70,19 +73,26 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  async addItemToStorage(storageType: StorageType, label: string = "Untitled"): Promise<void> {
+  async addItemToStorage(
+    storageType: StorageType,
+    label: string = "Untitled",
+  ): Promise<void> {
     await this.storageManager.initialize();
     await this.addItem(label, storageType);
   }
 
   async renameItem(item: ScrapItem, newLabel: string): Promise<void> {
-    await this.storageManager.updateInType(item.storageType, item.id, { label: newLabel });
+    await this.storageManager.updateInType(item.storageType, item.id, {
+      label: newLabel,
+    });
     await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
   async editItem(item: ScrapItem, content: string): Promise<void> {
-    await this.storageManager.updateInType(item.storageType, item.id, { content });
+    await this.storageManager.updateInType(item.storageType, item.id, {
+      content,
+    });
     await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
@@ -93,22 +103,23 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
     this._onDidChangeTreeData.fire(undefined);
   }
 
-
   refresh(): void {
     this.loadItems();
     this._onDidChangeTreeData.fire(undefined);
   }
 
-
   private async loadItems(): Promise<void> {
     try {
       const allItems = await this.storageManager.listAll();
-      
+
       // Sort each storage type's items by updatedAt
       for (const [, items] of allItems) {
-        items.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+        items.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        );
       }
-      
+
       this.storageGroups = allItems;
     } catch (error) {
       console.error("Failed to load scraps:", error);
@@ -118,18 +129,21 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
 
   // Migration helper for existing data
   async migrateFromOldFormat(): Promise<void> {
-    const oldData = this.storageManager.context.globalState.get<{label: string, content: string}[]>("items");
+    const oldData =
+      this.storageManager.context.globalState.get<
+        { label: string; content: string }[]
+      >("items");
     if (!oldData || oldData.length === 0) {
       return;
     }
 
     const now = new Date().toISOString();
-    const migratedScraps: ScrapData[] = oldData.map(item => ({
+    const migratedScraps: ScrapData[] = oldData.map((item) => ({
       id: Date.now().toString() + Math.random().toString(36).slice(2),
       label: item.label,
       content: item.content,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     }));
 
     // Save migrated data to GlobalState
@@ -139,7 +153,7 @@ export class ListProvider implements vscode.TreeDataProvider<TreeItem> {
 
     // Clear old data
     await this.storageManager.context.globalState.update("items", undefined);
-    
+
     // Reload items
     await this.loadItems();
     this._onDidChangeTreeData.fire(undefined);

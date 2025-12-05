@@ -9,7 +9,7 @@ export class StorageManager {
 
   constructor(
     public readonly context: vscode.ExtensionContext,
-    private readonly storageType: StorageType = StorageType.GlobalState
+    private readonly storageType: StorageType = StorageType.GlobalState,
   ) {
     this.provider = this.createProvider(storageType);
   }
@@ -39,19 +39,19 @@ export class StorageManager {
   async switchProvider(type: StorageType): Promise<void> {
     // Get all data from current provider
     const data = await this.provider.list();
-    
+
     // Create new provider
     const newProvider = this.createProvider(type);
     await newProvider.initialize();
-    
+
     // Migrate data
     for (const item of data) {
       await newProvider.save(item);
     }
-    
+
     // Switch provider
     this.provider = newProvider;
-    
+
     // Save preference
     await this.context.globalState.update("scraps.storageType", type);
   }
@@ -82,6 +82,8 @@ export class StorageManager {
   }
 
   get currentStorageType(): StorageType {
-    return this.provider instanceof FileStorageProvider ? StorageType.File : StorageType.GlobalState;
+    return this.provider instanceof FileStorageProvider
+      ? StorageType.File
+      : StorageType.GlobalState;
   }
 }

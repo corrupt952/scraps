@@ -7,7 +7,7 @@ export class EditorProvider implements vscode.WebviewViewProvider {
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    private readonly listProvider: ListProvider
+    private readonly listProvider: ListProvider,
   ) {}
 
   edit(item: ScrapItem) {
@@ -23,7 +23,7 @@ export class EditorProvider implements vscode.WebviewViewProvider {
   resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ) {
     this._view = webviewView;
 
@@ -54,15 +54,20 @@ export class EditorProvider implements vscode.WebviewViewProvider {
     }
 
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-ui", "dist", "bundle.js")
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "webview-ui",
+        "dist",
+        "bundle.js",
+      ),
     );
     const styleUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
         "webview-ui",
         "dist",
-        "bundle.css"
-      )
+        "bundle.css",
+      ),
     );
     return `
 <!DOCTYPE html>
