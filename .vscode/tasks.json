@@ -4,8 +4,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "watch",
+      "label": "watch:extension",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["run", "watch:extension"],
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
       "presentation": {
@@ -15,6 +17,23 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "watch:webview",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["run", "watch:webview"],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["run", "build"],
+      "group": "build"
     }
   ]
 }

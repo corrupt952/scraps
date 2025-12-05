@@ -7,6 +7,7 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Placeholder from "@tiptap/extension-placeholder";
 import Heading from "@tiptap/extension-heading";
+import History from "@tiptap/extension-history";
 
 type InitialData = {
   label: string;
@@ -21,9 +22,6 @@ const TiptapEditor = () => {
     extensions: [
       StarterKit.configure({
         heading: false,
-        history: {
-          depth: 100,
-        },
         bulletList: {
           HTMLAttributes: {
             class: "list-disc pl-4",
@@ -44,7 +42,13 @@ const TiptapEditor = () => {
       Heading.configure({
         levels: [1, 2, 3],
       }).extend({
-        renderHTML({ node, HTMLAttributes }) {
+        renderHTML({
+          node,
+          HTMLAttributes,
+        }: {
+          node: any;
+          HTMLAttributes: Record<string, any>;
+        }) {
           const level = (
             this.options.levels.includes(node.attrs.level)
               ? node.attrs.level
@@ -87,6 +91,9 @@ const TiptapEditor = () => {
         placeholder: `Start typing...`,
         emptyNodeClass:
           "first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none",
+      }),
+      History.configure({
+        depth: 100,
       }),
     ],
     autofocus: true,

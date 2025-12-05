@@ -54,20 +54,10 @@ export class EditorProvider implements vscode.WebviewViewProvider {
     }
 
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "webview-ui",
-        "dist",
-        "bundle.js",
-      ),
+      vscode.Uri.joinPath(this._extensionUri, "webview-dist", "bundle.js"),
     );
     const styleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "webview-ui",
-        "dist",
-        "bundle.css",
-      ),
+      vscode.Uri.joinPath(this._extensionUri, "webview-dist", "bundle.css"),
     );
     return `
 <!DOCTYPE html>

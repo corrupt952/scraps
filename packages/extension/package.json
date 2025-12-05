@@ -1,0 +1,126 @@
+{
+  "name": "scraps",
+  "displayName": "scraps",
+  "description": "This extension allows you to make notes in the sidebar.",
+  "icon": "icon.png",
+  "publisher": "corrupt952",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corrupt952/scraps"
+  },
+  "version": "0.1.3",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:scraps.list"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "scraps.addItem",
+        "title": "Add"
+      },
+      {
+        "command": "scraps.renameItem",
+        "title": "Rename"
+      },
+      {
+        "command": "scraps.deleteItem",
+        "title": "Delete"
+      },
+      {
+        "command": "scraps.editItem",
+        "title": "Edit"
+      },
+      {
+        "command": "scraps.refreshList",
+        "title": "Refresh"
+      },
+      {
+        "command": "scraps.addToStorage",
+        "title": "Add New Scrap",
+        "icon": "$(add)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "scraps",
+          "title": "scraps",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "scraps": [
+        {
+          "type": "tree",
+          "id": "scraps.list",
+          "name": "List",
+          "initialSize": 0.1
+        },
+        {
+          "type": "webview",
+          "id": "scraps.editor",
+          "name": "Editor"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "scraps.refreshList",
+          "when": "view == scraps.list",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "scraps.addToStorage",
+          "when": "view == scraps.list && viewItem =~ /^storageGroup/ && viewItem =~ /available/",
+          "group": "navigation@1"
+        },
+        {
+          "command": "scraps.renameItem",
+          "when": "view == scraps.list && viewItem =~ /^scrapItem/",
+          "group": "1_modification"
+        },
+        {
+          "command": "scraps.deleteItem",
+          "when": "view == scraps.list && viewItem =~ /^scrapItem/",
+          "group": "1_modification"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile && pnpm run copy-webview",
+    "compile": "tsc -p ./",
+    "copy-webview": "cp -r ../webview-ui/dist webview-dist",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "test": "TS_NODE_PROJECT=tsconfig.test.json vscode-test",
+    "package": "vsce package --no-dependencies",
+    "publish": "vsce publish --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "22.x",
+    "@types/sinon": "^17.0.4",
+    "@types/vscode": "^1.89.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^3.0.0",
+    "sinon": "^21.0.0",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
+  }
+}

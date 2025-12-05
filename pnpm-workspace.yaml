@@ -1,0 +1,6 @@
+packages:
+  - 'packages/*'
+
+# Security: Reject packages published less than 2 days ago
+# Reduces the risk of zero-day attacks from malicious packages
+minimumReleaseAge: 2880

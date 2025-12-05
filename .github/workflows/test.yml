@@ -12,23 +12,29 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
     - uses: actions/checkout@v6
-    
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
         node-version: '20'
-        cache: 'npm'
-    
+        cache: 'pnpm'
+
     - name: Install dependencies
-      run: npm ci
-    
+      run: pnpm install --frozen-lockfile
+
+    - name: Build webview
+      run: pnpm run build:webview
+
     - name: Run tests (Linux)
       if: runner.os == 'Linux'
-      run: xvfb-run -a npm test
-    
+      run: xvfb-run -a pnpm test
+
     - name: Run tests (macOS, Windows)
       if: runner.os != 'Linux'
-      run: npm test
+      run: pnpm test

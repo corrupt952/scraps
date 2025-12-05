@@ -155,6 +155,9 @@ dist
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Webview build output (copied during packaging)
+packages/extension/webview-dist/
+
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
