@@ -109,7 +109,8 @@
     "pretest": "npm run compile && npm run lint",
     "test": "TS_NODE_PROJECT=tsconfig.test.json vscode-test",
     "package": "npx vsce package",
-    "publish": "npx vsce publish"
+    "publish": "npx vsce publish",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -121,6 +122,7 @@
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.57.0",
+    "prettier": "^3.7.4",
     "sinon": "^21.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
