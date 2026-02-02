@@ -4,3 +4,6 @@ packages:
 # Security: Reject packages published less than 2 days ago
 # Reduces the risk of zero-day attacks from malicious packages
 minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+  # Renovate security update: eslint@9.26.0
+  - eslint@9.26.0
