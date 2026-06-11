@@ -117,7 +117,7 @@
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^3.0.0",
-    "sinon": "^21.0.0",
+    "sinon": "^22.0.0",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
