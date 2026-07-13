@@ -28,7 +28,7 @@
     "@typescript-eslint/parser": "8.63.0",
     "eslint": "8.57.1",
     "prettier": "3.9.4",
-    "typescript": "5.9.3"
+    "typescript": "7.0.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
