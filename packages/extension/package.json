@@ -110,15 +110,15 @@
     "publish": "vsce publish --no-dependencies"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.6",
-    "@types/node": "22.x",
-    "@types/sinon": "^22.0.0",
-    "@types/vscode": "^1.89.0",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0",
-    "@vscode/vsce": "^3.0.0",
-    "sinon": "^22.0.0",
-    "ts-node": "^10.9.2"
+    "@types/mocha": "10.0.10",
+    "@types/node": "22.20.0",
+    "@types/sinon": "22.0.0",
+    "@types/vscode": "1.125.0",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.0.0",
+    "@vscode/vsce": "3.9.2",
+    "sinon": "22.0.0",
+    "ts-node": "10.9.2"
   },
   "dependencies": {
     "uuid": "^14.0.0"
