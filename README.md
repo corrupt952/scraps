@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **This repository is archived and no longer maintained.**
+> Feel free to fork it if you'd like to continue development.
+>
+> このリポジトリはアーカイブ済みで、メンテナンスを終了しています。開発を引き継ぎたい方はお気軽にフォークしてください。
+
 # Scraps
 
 Scraps is a simple tool that allows you to make notes in the sidebar.
