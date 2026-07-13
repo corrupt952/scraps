@@ -24,11 +24,11 @@
     "format": "prettier --write \"packages/**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.63.0",
-    "@typescript-eslint/parser": "^8.63.0",
-    "eslint": "^8.57.0",
-    "prettier": "^3.9.4",
-    "typescript": "^5.4.5"
+    "@typescript-eslint/eslint-plugin": "8.63.0",
+    "@typescript-eslint/parser": "8.63.0",
+    "eslint": "8.57.1",
+    "prettier": "3.9.4",
+    "typescript": "5.9.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
